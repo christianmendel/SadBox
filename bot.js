@@ -38,7 +38,13 @@ client.on('message', async message => {
         const m = await message.channel.send("Oi?");
         m.edit(`Ola eu sou o SadBox!`);
     }
-    
+    // if(comando === "play") {
+    //     const x = await message.member.voice.channel.join()
+    //     console.log(x)
+    // }
+    if(comando === "autor") {
+        const m = await message.channel.send("Grupo 16");
+    }
 })
 
 client.login(config.token)
