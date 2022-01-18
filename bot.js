@@ -12,7 +12,7 @@ const config = require('./config.json')
 
 const dbURI = "mongodb+srv://sadBox:grupo16@cluster0.jwdqx.mongodb.net/acervo-de-musicas?retryWrites=true&w=majority";
 
-mongoose.connect(dbURI, { useNewUrlParser: true, useUnifiedTopology: true })
+const respostaDoDB = mongoose.connect(dbURI, { useNewUrlParser: true, useUnifiedTopology: true })
 
 client.on('ready', () => {
     console.log(`Bot foi iniciado, com ${client.users.size} usuarios, em ${client.channels.size} canais, em ${client.guilds.size} servidores`)
@@ -64,11 +64,7 @@ client.on('message', message => {
             type: String,
             required: true,
         },
-        type: {
-            type: String,
-            required: true,
-        },
-        author: {
+        link: {
             type: String,
             required: true,
         }
@@ -76,17 +72,36 @@ client.on('message', message => {
 
     const Musica = mongoose.model('Musica', MusicaSchema);
 
-
-    const args = message.content.slice(config.prefix.length).trim().split(/ +/g);
-    const comando = args.shift().toLowerCase();
-    const musica = new Musica({title:'tituloTeste', type: 'tipoTeste', author: 'autorTeste'})
+    const args = message.content.slice(config.prefix.length).split(';');
+    const comando = args[0]
+    const musica = new Musica({ title: args[1], link: args[2] })
 
     if (comando === "save") {
-
         musica.save().then((resp) => {
-            console.log('Item salvo no mongoDB')
+            //console.log(`comando: ${comando}, args: ${args}`)
+            console.log(resp)
+            console.log(`Salvo no DB\n nome:${args[1]}, link: ${args[2]}`)
         })
     }
+
+    else if (comando === 'show') {
+        /*const resp = Musica.collection.find({})
+        //const resp = Musica.find({})
+        console.log(resp)*/
+    }
+    /*
+        else if (comando === 'editName') {
+    
+        }
+    
+        else if (comando === 'editLink') {
+    
+        }
+    
+        else if (comando === 'delete') {
+    
+        }
+        */
 })
 
 
