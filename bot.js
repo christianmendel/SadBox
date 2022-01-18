@@ -1,15 +1,13 @@
 const Discord = require("discord.js");
 const ytdl = require('ytdl-core');
-const prefix = require('./config.json').prefix;
+const config = require('./config.json');
 const token = require('./config.json').token;
-
 const client = new Discord.Client();
-
 const mongoose = require('mongoose');
 
 const dbURI = "mongodb+srv://sadBox:grupo16@cluster0.jwdqx.mongodb.net/acervo-de-musicas?retryWrites=true&w=majority";
 
-const respostaDoDB = mongoose.connect(dbURI, { useNewUrlParser: true, useUnifiedTopology: true })
+mongoose.connect(dbURI, { useNewUrlParser: true, useUnifiedTopology: true })
 
 
 client.on('ready', () => {
@@ -54,7 +52,6 @@ client.on('message', async (message) => {
             message.reply('Erro, verifique se voce esta connectado em canal de voz')
         }
     }
-
 })
 
 client.on('message', message => {
@@ -77,9 +74,10 @@ client.on('message', message => {
 
     const args = message.content.slice(config.prefix.length).split(';');
     const comando = args[0]
-    const musica = new Musica({ title: args[1], link: args[2] })
+
 
     if (comando === "save") {
+        const musica = new Musica({ title: args[1], link: args[2] })
         musica.save().then((resp) => {
             //console.log(`comando: ${comando}, args: ${args}`)
             console.log(resp)
@@ -88,9 +86,16 @@ client.on('message', message => {
     }
 
     else if (comando === 'show') {
-        /*const resp = Musica.collection.find({})
-        //const resp = Musica.find({})
-        console.log(resp)*/
+        async function listarBanco() {
+            const musicas = await Musica.find()
+            const m = await message.channel.send("Show?");
+            let saidaDeTela = []
+            musicas.forEach((item) => {
+                saidaDeTela.push(item.title)
+            })
+            m.edit(`Lista de musicas: ${saidaDeTela.join(' - ')}`);
+        }
+        listarBanco()
     }
     /*
         else if (comando === 'editName') {
