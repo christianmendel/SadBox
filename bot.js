@@ -9,6 +9,20 @@ const dbURI = "mongodb+srv://sadBox:grupo16@cluster0.jwdqx.mongodb.net/acervo-de
 
 mongoose.connect(dbURI, { useNewUrlParser: true, useUnifiedTopology: true })
 
+//-----Formato do objeto do DB----------
+const Schema = mongoose.Schema;
+const MusicaSchema = new Schema({
+    title: {
+        type: String,
+        required: true,
+    },
+    link: {
+        type: String,
+        required: true,
+    }
+}, { timestamps: true });
+const Musica = mongoose.model('Musica', MusicaSchema);
+//---------------------------------------
 
 client.on('ready', () => {
     console.log(`Bot foi iniciado, com sucesso!`)
@@ -17,100 +31,81 @@ client.on('ready', () => {
 
 client.on('message', async (message) => {
 
-    const args = message.content
-    const comando = args.toLowerCase();
-
-    if (comando === "ping") {
-        const m = await message.channel.send("Ping?");
-        m.edit(`Pong! A Latência é ${m.createdTimestamp - message.createdTimestamp}ms`);
-    }
-    if (comando === "oi") {
-        const m = await message.channel.send("Oi?");
-        m.edit(`Ola eu sou o SadBox!`);
-    }
-    if (comando === "tudo bem?") {
-        await message.channel.send("estou muito bem!");
-    }
-    if (comando === "bot vagabundo") {
-        await message.channel.send("vagabundo é você que não me programou direito");
-    }
-    if (comando === "tchau") {
-        await message.channel.send("até logo!");
-    }
-    // if(comando === ";rasteira") {
-    //     const x = await message.member.voice.disconnect()
-    //     console.log(x)
-    // }
-    if (comando === ";help") {
-        await message.channel.send("use o comando ;rasteira");
-    }
-    if (comando === ";play") {
-        try{
-            await message.member.voice.channel.join()
-            message.reply('Entrando')
-        }catch{
-            message.reply('Erro, verifique se voce esta connectado em canal de voz')
-        }
-    }
-})
-
-client.on('message', message => {
-    if (!message.content.startsWith(config.prefix)) return;
-
-    const Schema = mongoose.Schema;
-
-    const MusicaSchema = new Schema({
-        title: {
-            type: String,
-            required: true,
-        },
-        link: {
-            type: String,
-            required: true,
-        }
-    }, { timestamps: true });
-
-    const Musica = mongoose.model('Musica', MusicaSchema);
-
     const args = message.content.slice(config.prefix.length).split(';');
     const comando = args[0]
+    const m = await message.channel
 
 
-    if (comando === "save") {
-        const musica = new Musica({ title: args[1], link: args[2] })
-        musica.save().then((resp) => {
-            //console.log(`comando: ${comando}, args: ${args}`)
-            console.log(resp)
-            console.log(`Salvo no DB\n nome:${args[1]}, link: ${args[2]}`)
-        })
-    }
+    switch (comando) {
+        case "ping":
+            m.send(`Pong! A Latência é ${m.createdTimestamp - message.createdTimestamp}ms`);
+            break;
 
-    else if (comando === 'show') {
-        async function listarBanco() {
+        case "oi":
+            m.send(`Ola eu sou o SadBox!`);
+            break
+
+        case "tudo bem?":
+            await message.channel.send("estou muito bem!");
+            break
+
+        case "bot vagabundo":
+            await message.channel.send("vagabundo é você que não me programou direito");
+            break
+
+        case "tchau":
+            await message.channel.send("até logo!");
+            break
+
+        case "rasteira":
+            const x = await message.member.voice.disconnect()
+        //     console.log(x)
+        case "help":
+            await message.channel.send("use o comando ;rasteira");
+            break
+
+        case "play":
+            try {
+                await message.member.voice.channel.join()
+                message.reply('Entrando')
+            } catch {
+                message.reply('Erro, verifique se voce esta connectado em canal de voz')
+            }
+            break
+        case "save":
+            const musica = new Musica({ title: args[1], link: args[2] })
+            musica.save().then((resp) => {
+                //console.log(`comando: ${comando}, args: ${args}`)
+                m.send(`Musica salva: ${args[1]} > ${args[2]}`)
+                console.log(`Salvo no DB\n nome:${args[1]}, link: ${args[2]}`)
+            })
+            break
+
+        case "show":
             const musicas = await Musica.find()
-            const m = await message.channel.send("Show?");
             let saidaDeTela = []
             musicas.forEach((item) => {
-                saidaDeTela.push(item.title)
+                saidaDeTela.push({ title: item.title, link: item.link })
             })
-            m.edit(`Lista de musicas: ${saidaDeTela.join(' - ')}`);
-        }
-        listarBanco()
-    }
-    /*
-        else if (comando === 'editName') {
-    
-        }
-    
-        else if (comando === 'editLink') {
-    
-        }
-    
-        else if (comando === 'delete') {
-    
-        }
-        */
-})
 
+            if (args[1] == undefined) {
+                m.send(`Seja mais específico...`)
+            } else {
+                m.send(`Musicas:`)
+                saidaDeTela.forEach((item) => {
+                    m.send(`${item[args[1]]}`);
+                })
+            }
+
+            break
+
+        case "edit":
+            break
+
+        case "delete":
+            break
+
+    }
+})
 
 client.login(token);
