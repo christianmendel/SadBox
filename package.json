@@ -10,7 +10,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "discord.js": "^13.6.0",
-    "mongoose": "^6.1.7"
+    "discord.js": "12.3.1",
+    "mongoose": "^6.1.7",
+    "ytdl-core": "3.2.2"
   }
 }
