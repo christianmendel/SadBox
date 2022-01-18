@@ -4,6 +4,7 @@ const config = require('./config.json');
 const token = require('./config.json').token;
 const client = new Discord.Client();
 const mongoose = require('mongoose');
+const ffmpeg = require("ffmpeg-static");
 
 const dbURI = "mongodb+srv://sadBox:grupo16@cluster0.jwdqx.mongodb.net/acervo-de-musicas?retryWrites=true&w=majority";
 
@@ -66,8 +67,19 @@ client.on('message', async (message) => {
 
         case "play":
             try {
-                await message.member.voice.channel.join()
-                message.reply('Entrando')
+                //await message.member.voice.channel.join()
+                 message.member.voice.channel.join().then((res)=>{
+                    const x = res.play('Polozhenie.mp3')
+                    // const x = res.play(ytdl(args[1], { filter: 'audioonly' }),{volume:1})
+                    //console.log(x)
+                }).catch((err)=>{
+                    console.log(err.message)
+                })
+                // const connect = await message.member.voice.channel.join()
+                //connect.play(ytdl(args[1], { filter: 'audioonly' }),{volume:0.5})
+                //connect.playStream(ytdl(args[1], { filter: 'audioonly' }),{volume:0.5})
+                console.log(args[1])
+                message.reply('Entrando...')
             } catch {
                 message.reply('Erro, verifique se voce esta connectado em canal de voz')
             }
