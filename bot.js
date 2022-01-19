@@ -71,12 +71,21 @@ client.on('message', async (message) => {
                 //await message.member.voice.channel.join()
                 message.member.voice.channel.join().then((res) => {
                     //const x = res.play(ytdl(args[1],{filter:'audioonly'}))
-                    if (args[1] == 'ela me falou') {
-                        const x = res.play('./Musicas/Ela Me Falou Que Quer Rave.mp3')
-                    } else if (args[1] == 'polozhenie') {
-                        const x = res.play('./Musicas/Polozhenie.mp3')
-                    } else {
-                        message.reply('Não encontrei sua musica')
+                    const path = "./Musicas/"
+                    switch (args[1]) {
+                        case "ela me falou":
+                            res.play(path + 'Ela Me Falou Que Quer Rave.mp3')
+                            break;
+                        case "polozhenie":
+                            res.play(path + 'Polozhenie.mp3')
+                            break;
+                        case "iron maiden":
+                            res.play(path + 'Iron Maiden.mp3')
+                            break;
+
+                        default:
+                            message.reply('Não encontrei sua musica')
+                            break;
                     }
                 }).catch((err) => {
                     console.log(err.message)
@@ -130,7 +139,7 @@ client.on('message', async (message) => {
             message.reply('Agora eu to grandão!')
             break
         case "usuarios":
-            const y =  await message.guild.members
+            const y = await message.guild.members
             message.reply(y)
             console.log(y)
             break
