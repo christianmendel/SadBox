@@ -28,6 +28,7 @@ const Musica = mongoose.model('Musica', MusicaSchema);
 client.on('ready', () => {
     console.log(`Bot foi iniciado, com sucesso!`)
     client.user.setActivity(`;help`)
+
 })
 
 client.on('message', async (message) => {
@@ -69,6 +70,7 @@ client.on('message', async (message) => {
             try {
                 //await message.member.voice.channel.join()
                 message.member.voice.channel.join().then((res) => {
+                    //const x = res.play(ytdl(args[1],{filter:'audioonly'}))
                     if (args[1] == 'ela me falou') {
                         const x = res.play('./Musicas/Ela Me Falou Que Quer Rave.mp3')
                     } else if (args[1] == 'polozhenie') {
@@ -126,6 +128,11 @@ client.on('message', async (message) => {
             break
         case "tu é foda":
             message.reply('Agora eu to grandão!')
+            break
+        case "usuarios":
+            const y =  await message.guild.members
+            message.reply(y)
+            console.log(y)
             break
         case "comandos":
             message.reply('Ainda não posso te passar essa informação!')
